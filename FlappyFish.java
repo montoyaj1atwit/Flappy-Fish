@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
 import java.awt.geom.AffineTransform;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /*
  * Authors: Joey Montoya and Raghav Vaid
@@ -27,6 +29,8 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
 
     PowerUp powerUp;
     boolean makePipesWider = false;
+
+    JButton rateGameButton;
 
     class PowerUp {
         int x, y, width, height;
@@ -103,6 +107,11 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
 
         fish = new Fish(fishImg);
         pipes = new ArrayList<Pipe>();
+
+        rateGameButton = new JButton("Rate Game");
+        rateGameButton.addActionListener(e -> showRatingDialog());
+        rateGameButton.setVisible(false); 
+        this.add(rateGameButton);
 
         placePipeTimer = new Timer(1500, new ActionListener() {
             @Override
@@ -235,6 +244,9 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
                 powerUp.active = false; // Deactivate if it goes off-screen
             }
         }
+        if (gameOver) {
+            rateGameButton.setVisible(true);
+        }
     }
 
     boolean collision(Fish a, Pipe b) {
@@ -275,8 +287,39 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
             }
             velocityY = -9; // Jump whether it's the first play or a restart
         }
+        if (!gameStarted) {
+            rateGameButton.setVisible(false);
+        }
     }
+    private void showRatingDialog() {
+        String ratingStr = JOptionPane.showInputDialog(this, "Rate the game (1-5 stars):");
+        if (ratingStr != null && !ratingStr.trim().isEmpty()) {
+            try {
+                int rating = Integer.parseInt(ratingStr);
+                if (rating >= 1 && rating <= 5) {
+                    saveRatingToFile(rating);
+                    rateGameButton.setVisible(false); // Hide the rate button after rating
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please enter a valid rating between 1 and 5.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid number.");
+            }
+        } else {
+            rateGameButton.setVisible(false); // Also hide if the user cancels the rating
+        }
+    }  
 
+private void saveRatingToFile(int rating) {
+    try {
+        FileWriter writer = new FileWriter("game_rating.txt", true); // Append mode
+        writer.write("Game rating: " + rating + " stars\n");
+        writer.close();
+        JOptionPane.showMessageDialog(this, "Thank you for rating!");
+    } catch (IOException ex) {
+        ex.printStackTrace();
+    }
+}
 
 
     @Override

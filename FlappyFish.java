@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
 
+/*
+ * Authors: Joey Montoya and Raghav Vaid
+ */
+
 public class FlappyFish extends JPanel implements ActionListener, KeyListener {
     int boardWidth = 360;
     int boardHeight = 640;

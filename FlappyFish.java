@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
+import java.awt.geom.AffineTransform;
+import java.awt.Graphics2D;
 
 public class FlappyFish extends JPanel implements ActionListener, KeyListener {
     int boardWidth = 360;
@@ -17,8 +19,8 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
     // fish class
     int fishX = boardWidth / 8;
     int fishY = boardWidth / 2;
-    int fishWidth = 34;
-    int fishHeight = 24;
+    int fishWidth = 40;
+    int fishHeight = 40;
 
     class Fish {
         int x = fishX;
@@ -118,8 +120,22 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         // background
         g.drawImage(backgroundImg, 0, 0, this.boardWidth, this.boardHeight, null);
 
-        // fish
-        g.drawImage(fishImg, fish.x, fish.y, fish.width, fish.height, null);
+        Graphics2D g2d = (Graphics2D) g;
+
+        double rotationAngle = velocityY * 0.05; 
+        
+        int cx = fish.x + fish.width / 2;
+        int cy = fish.y + fish.height / 2;
+    
+        AffineTransform old = g2d.getTransform();
+
+        g2d.rotate(rotationAngle, cx, cy);
+        
+        // draw the fish with rotation applied
+        g2d.drawImage(fish.img, fish.x, fish.y, fish.width, fish.height, null);
+        
+        // Restore original transform
+        g2d.setTransform(old);
 
         // pipes
         for (Pipe pipe : pipes) {
@@ -127,13 +143,13 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         }
 
         // score and instructions
-        g.setColor(Color.black);
-        g.setFont(new Font("Arial", Font.PLAIN, 24)); // Reduced font size
+        g.setColor(Color.white);
+        g.setFont(new Font("Arial", Font.PLAIN, 18)); 
         if (gameOver) {
-            g.drawString("Game Over: Score: " + (int) score + ", Highest: " + (int) highestScore, 10, boardHeight / 4);
-            g.drawString("Press Space to Play Again", 10, boardHeight / 4 + 30);
+            g.drawString("Game Over: Score: " + (int) score + ", Highest: " + (int) highestScore, 10, boardHeight / 14);
+            g.drawString("Press Space to Play Again", 10, boardHeight / 14 + 30);
         } else if (firstTime) {
-            g.drawString("Press Space to Start", 10, boardHeight / 4);
+            g.drawString("Press Space to Start", 10, boardHeight / 12);
         } else {
             g.drawString("Score: " + (int) score, 10, 30);
         }
@@ -222,6 +238,7 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         FlappyFish game = new FlappyFish();
         frame.add(game);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.pack();
         frame.setVisible(true);
     }

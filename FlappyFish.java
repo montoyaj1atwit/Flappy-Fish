@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
 import java.awt.geom.AffineTransform;
-import java.awt.Graphics2D;
 
 /*
  * Authors: Joey Montoya and Raghav Vaid
@@ -25,6 +24,23 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
     int fishY = boardWidth / 2;
     int fishWidth = 40;
     int fishHeight = 40;
+
+    PowerUp powerUp;
+    boolean makePipesWider = false;
+
+    class PowerUp {
+        int x, y, width, height;
+        Image img;
+        boolean active = true;
+    
+        PowerUp(Image img, int startX, int startY, int width, int height) {
+            this.img = img;
+            this.x = startX;
+            this.y = startY;
+            this.width = width;
+            this.height = height;
+        }
+    }
 
     class Fish {
         int x = fishX;
@@ -100,11 +116,22 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
 
         gameLoop = new Timer(1000 / 60, this);
         gameLoop.start();
+        new Timer(30000, e -> spawnPowerUp()).start();
+    }
+
+    void spawnPowerUp() {
+        if (powerUp == null || !powerUp.active) {
+            int startX = boardWidth + 100; // Start off-screen
+            int startY = random.nextInt(boardHeight - 20); // Random height, but fully visible
+            Image powerUpImg = new ImageIcon(getClass().getResource("./powerup.png")).getImage();
+            powerUp = new PowerUp(powerUpImg, startX, startY, 20, 20);
+        }
     }
 
     void placePipes() {
+        int openingSpace = makePipesWider ? boardHeight / 3 : boardHeight / 4; // Increase gap if power-up is collected
         int randomPipeY = (int) (pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2));
-        int openingSpace = boardHeight / 4;
+       
 
         Pipe topPipe = new Pipe(topPipeImg);
         topPipe.y = randomPipeY;
@@ -113,6 +140,7 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         Pipe bottomPipe = new Pipe(bottomPipeImg);
         bottomPipe.y = topPipe.y + pipeHeight + openingSpace;
         pipes.add(bottomPipe);
+        makePipesWider = false;
     }
 
     public void paintComponent(Graphics g) {
@@ -157,6 +185,9 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         } else {
             g.drawString("Score: " + (int) score, 10, 30);
         }
+        if (powerUp != null && powerUp.active) {
+            g.drawImage(powerUp.img, powerUp.x, powerUp.y, powerUp.width, powerUp.height, null);
+        }
     }
 
     public void move() {
@@ -195,6 +226,15 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
             gameLoop.stop();
             placePipeTimer.stop();
         }
+        if (powerUp != null && powerUp.active) {
+            powerUp.x += velocityX; // Move the power-up with the pipes
+            if (collision(fish, powerUp)) {
+                makePipesWider = true; // Activate wider pipes
+                powerUp.active = false; // Deactivate the power-up
+            } else if (powerUp.x + powerUp.width < 0) {
+                powerUp.active = false; // Deactivate if it goes off-screen
+            }
+        }
     }
 
     boolean collision(Fish a, Pipe b) {
@@ -202,6 +242,12 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
                a.x + a.width > b.x &&   // a's top right corner passes b's top left corner
                a.y < b.y + b.height &&  // a's top left corner doesn't reach b's bottom left corner
                a.y + a.height > b.y;    // a's bottom left corner passes b's top left corner
+    }
+    boolean collision(Fish a, PowerUp b) {
+        return a.x < b.x + b.width && 
+               a.x + a.width > b.x && 
+               a.y < b.y + b.height && 
+               a.y + a.height > b.y;
     }
 
     @Override
@@ -230,6 +276,8 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
             velocityY = -9; // Jump whether it's the first play or a restart
         }
     }
+
+
 
     @Override
     public void keyTyped(KeyEvent e) {}

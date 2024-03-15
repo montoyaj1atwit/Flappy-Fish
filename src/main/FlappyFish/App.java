@@ -1,4 +1,7 @@
+package src.main.FlappyFish;
 import javax.swing.*;
+
+//Controls the frame for the game
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -6,7 +9,6 @@ public class App {
         int boardHeight = 640;
 
         JFrame frame = new JFrame("Flappy Fish");
-        // frame.setVisible(true);
 		frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);

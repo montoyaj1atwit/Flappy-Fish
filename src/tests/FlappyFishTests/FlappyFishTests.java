@@ -1,12 +1,12 @@
-package src.tests.FlappyFishTests.java;
+package src.tests.FlappyFishTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import src.main.FlappyFish.java.FlappyFish;
-import src.main.FlappyFish.java.FlappyFish.Fish;
-import src.main.FlappyFish.java.FlappyFish.Pipe;
-import src.main.FlappyFish.java.FlappyFish.PowerUp;
+import src.main.FlappyFish.FlappyFish;
+import src.main.FlappyFish.FlappyFish.Fish;
+import src.main.FlappyFish.FlappyFish.Pipe;
+import src.main.FlappyFish.FlappyFish.PowerUp;
 
 import static org.junit.jupiter.api.Assertions.*;
 

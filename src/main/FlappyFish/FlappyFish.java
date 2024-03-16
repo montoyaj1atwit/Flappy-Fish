@@ -1,4 +1,4 @@
-package src.main.FlappyFish.java;
+package src.main.FlappyFish;
 
 import java.awt.*;
 import java.awt.event.*;

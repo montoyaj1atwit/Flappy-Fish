@@ -1,4 +1,4 @@
-package src.main.FlappyFish;
+package src.main.FlappyFish.java;
 import javax.swing.*;
 
 //Controls the frame for the game

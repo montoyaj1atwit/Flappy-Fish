@@ -109,7 +109,7 @@ public class FlappyFish extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
 
         backgroundImg = new ImageIcon(getClass().getResource("./flappyfishbg.png")).getImage();
-        fishImg = new ImageIcon(getClass().getResource("./flappyfish.png")).getImage();
+        fishImg = new ImageIcon(getClass().getResource("./flappyfishimage.png")).getImage();
         topPipeImg = new ImageIcon(getClass().getResource("./toppipe.png")).getImage();
         bottomPipeImg = new ImageIcon(getClass().getResource("./bottompipe.png")).getImage();
 
